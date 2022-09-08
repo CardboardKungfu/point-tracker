@@ -18,5 +18,13 @@ exports.transaction_list = (req, res) => {
     console.log(balance);
     // The JSON data has 'transactions' as the label of an array of transactions. 
     // Returning transactions.transactions sends an array of JSON objects downstream
-    res.render('index', { title: 'Fetch Rewards Points Portal', transaction_list: transactions, points_balance: balance });
+    res.render('index', { title: 'Points Portal Home', transaction_list: transactions, points_balance: balance });
+}
+
+exports.add_transaction = (req, res) => {
+    res.render('add_transaction', { title: 'Add Transaction' });
+}
+
+exports.spend = (req, res) => {
+    res.render('spend', { title: 'Spend Points' });
 }
