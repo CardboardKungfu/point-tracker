@@ -1,7 +1,16 @@
 {
     "payers": [
-        { "name": "DANNON" },
-        { "name": "UNILEVER" },
-        { "name": "MILLER COORS" }
+        { 
+            "name": "DANNON",
+            "balance": 1100
+        },
+        { 
+            "name": "UNILEVER" ,
+            "balance": 200
+        },
+        { 
+            "name": "MILLER COORS",
+            "balance": 10000
+        }
     ]
 }
