@@ -3,31 +3,26 @@
        {
           "payer":"DANNON",
           "points":1000,
-          "payee":1,
           "timestamp":"2020-11-02T14:00:00Z"
        },
        {
           "payer":"UNILEVER",
           "points":200,
-          "payee":2,
           "timestamp":"2020-10-31T11:00:00Z"
        },
        {
           "payer":"DANNON",
           "points":-200,
-          "payee":3,
           "timestamp":"2020-10-31T15:00:00Z"
        },
        {
           "payer":"MILLER COORS",
           "points":10000,
-          "payee":4,
           "timestamp":"2020-11-01T14:00:00Z"
        },
        {
           "payer":"DANNON",
           "points":300,
-          "payee":5,
           "timestamp":"2020-10-31T10:00:00Z"
        }
     ]

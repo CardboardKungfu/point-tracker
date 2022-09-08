@@ -2,9 +2,9 @@ extends layout
 
 block content
   h1 Welcome to #{title}
-  p Please select a user below to see account details 
 
+  if transaction_list[0].payer
+    p Points Balance: #{points_balance}
   
-  ul
-    each user in users_list
-      li= user.name
+  else 
+    li There are no transactions to display

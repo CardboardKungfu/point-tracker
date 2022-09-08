@@ -1,9 +1,17 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+const transactController = require('../controllers/transactController');
+
+// Render homepage with user data
+router.get('/', transactController.transaction_list);
+
+router.get('/add_transaction', function(req, res) {
+  res.send('NOT IMPLEMENTED: Add a Transaction');
+});
+
+router.get('/spend', function(req, res) {
+  res.send('NOT IMPLEMENTED: Spend Points');
 });
 
 module.exports = router;

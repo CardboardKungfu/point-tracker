@@ -1,5 +1,2 @@
 # Ignore NPM node_modules folder
 node_modules
-
-# Ignore any possible environment variables
-.env
