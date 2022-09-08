@@ -1,10 +1,19 @@
 extends layout
 
 block content
-  h1 Welcome to #{title}
-
+  //- Check if data came over properly before displaying data 
   if transaction_list[0].payer
     p Points Balance: #{points_balance}
+
+    p Transaction History 
+    ul 
+      each transaction in transaction_list 
+        li #{transaction.payer} | #{transaction.points} | #{transaction.timestamp}
   
   else 
     li There are no transactions to display
+
+  a(class='button' href='/spend') Spend
+  br
+  br
+  a(class='button' href='/add_transaction') Add Transaction
