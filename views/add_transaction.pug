@@ -1,4 +1,16 @@
 extends layout
 
 block content
-    p NOT IMPLEMENTED: add dropown options and post routes
+    p Please add a transaction below
+
+    form(method='post' action='/add_transaction')
+        label(for='payerSelection') Select Payer Name: 
+        select(id='payerSelection' name='payer_name' required='true')
+            each payer in payerArr
+                option=payer
+        label(for='pointAmt') Point Amount: 
+        input(id='pointAmt' type='number' placeholder="" + balance + "" name='point_amount' required='true')
+        input(type='submit')
+    if error
+        ul
+            li= error
