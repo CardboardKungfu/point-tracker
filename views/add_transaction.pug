@@ -4,12 +4,12 @@ block content
     p Please add a transaction below
 
     form(method='post' action='/add_transaction')
-        label(for='payerSelection') Select Payer Name: 
-        select(id='payerSelection' name='payer_name' required='true')
+        label(for='payer_name') Select Payer Name: 
+        select(id='payer_name' name='payer_name' required='true')
             each payer in payerArr
                 option=payer
-        label(for='pointAmt') Point Amount: 
-        input(id='pointAmt' type='number' placeholder="" + balance + "" name='point_amount' required='true')
+        label(for='point_amount') Point Amount: 
+        input(id='point_amount' type='number' placeholder="" + balance + "" name='point_amount' required='true')
         input(type='submit')
     if error
         ul
