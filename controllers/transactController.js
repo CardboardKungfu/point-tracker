@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { DateTime } = require("luxon");
 
 function loadTransactions() {
     /* Load transactions "DB" into JSON object */    
@@ -13,7 +14,7 @@ function saveTransaction(newTransObj) {
     let transArr = transJSON.transactions;
     transArr.push(newTransObj);
     let newTransJSON = { "transactions": transArr };
-    fs.writeFileSync('./database/transactions.json', JSON.stringify(newTransJSON));
+    fs.writeFileSync('./database/transactions2.json', JSON.stringify(newTransJSON));
 }
 
 function loadBalance() {
@@ -54,10 +55,24 @@ exports.add_transaction_get = (req, res) => {
 
 exports.add_transaction_post = (req, res) => {
     let balance = loadBalance();
+    let errorsArr = [];
 
-    if(req.body.point_amount <= 0 || req.body.point_amount > balance) {
+    if(!req.body.trans_date) {
+        errorsArr.push({ "msg": "Please input valid date" });
+    }
+    if(!req.body.trans_time) {
+        errorsArr.push({ "msg": "Please input valid time" });
+    }
+    if(req.body.point_amount <= 0) {
+        errorsArr.push({ "msg": "Point amount must not be negative or 0" });
+    }
+    if(req.body.point_amount > balance) {
+        errorsArr.push({ "msg": "Point amount must not exceed balance" });
+    }
+    console.log(errorsArr.length);
+    if(errorsArr.length > 0) {
         let payerArr = loadPayerNamesArr();
-        res.render('add_transaction', { title: 'Add Transaction', payerArr: payerArr, balance: balance, error: "Point amount must not be negative and must not exceed balance"});
+        res.render('add_transaction', { title: 'Add Transaction', payerArr: payerArr, balance: balance, errors: errorsArr});
     } else {
         let newTransaction = {
             "payer": req.body.payer_name,
@@ -83,7 +98,8 @@ exports.spend_post = (req, res) => {
 }
 
 exports.points_balance_get = (req, res) => {
-    res.render('points_balance', { title: "Points Balance" });
+    let balance = loadBalance();
+    res.render('points_balance', { title: "Points Balance", balance: balance });
 }
 
 exports.points_balance_post = (req, res) => {

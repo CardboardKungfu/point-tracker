@@ -10,7 +10,12 @@ block content
                 option=payer
         label(for='point_amount') Point Amount: 
         input(id='point_amount' type='number' placeholder="" + balance + "" name='point_amount' required='true')
+        label(for='trans_date') Date: 
+        input(id='trans_date' type='date' name='trans_date' required='true' min="1970-01-01" )
+        label(for='trans_time') Time: 
+        input(id='trans_time' type='time' name='trans_time' required='true')
         input(type='submit')
-    if error
+    if errors
         ul
-            li= error
+        each error in errors
+            li= error.msg
