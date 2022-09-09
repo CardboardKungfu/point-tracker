@@ -2,8 +2,8 @@
     "transactions": [
         {
             "payer": "DANNON",
-            "points": 1000,
-            "timestamp": "2020-11-02T14:00:00Z"
+            "points": 300,
+            "timestamp": "2020-10-31T10:00:00Z"
         },
         {
             "payer": "UNILEVER",
@@ -12,7 +12,7 @@
         },
         {
             "payer": "DANNON",
-            "points": -200,
+            "points": 200,
             "timestamp": "2020-10-31T15:00:00Z"
         },
         {
@@ -22,8 +22,14 @@
         },
         {
             "payer": "DANNON",
-            "points": 300,
-            "timestamp": "2020-10-31T10:00:00Z"
+            "points": 1000,
+            "timestamp": "2020-11-02T14:00:00Z"
+        },
+        {
+            "payer": "UNILEVER",
+            "points": 500,
+            "timestamp": "2022-11-30T12:59:00Z"
         }
-    ]
+    ],
+    "spent_points": []
 }
