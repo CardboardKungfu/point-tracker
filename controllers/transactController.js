@@ -74,7 +74,8 @@ exports.add_transaction_post = (req, res) => {
 };
 
 exports.spend_get = (req, res) => {
-    res.render('spend', { title: 'Spend Points' });
+    let balance = loadBalance();
+    res.render('spend', { title: 'Spend Points', balance: balance });
 }
 
 exports.spend_post = (req, res) => {

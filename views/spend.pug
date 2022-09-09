@@ -1,4 +1,12 @@
 extends layout
 
 block content
-    p NOT IMPLEMENTED: Add dropdowns and post routes
+    p Points balance: #{balance}
+
+    form(method='post' action='/spend')
+        label(for='point_amount') Point Amount: 
+        input(id='point_amount' type='number' placeholder="" + balance + "" name='point_amount' required='true')
+        input(type='submit')
+    if error
+        ul
+            li= error
