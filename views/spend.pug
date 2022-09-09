@@ -11,3 +11,8 @@ block content
     if error
         ul
             li= error
+    if spendArr 
+        p= spendMsg
+        ul 
+            each spentObj in spendArr 
+                li #{spentObj.payer} | #{spentObj.points} | #{spentObj.timestamp}

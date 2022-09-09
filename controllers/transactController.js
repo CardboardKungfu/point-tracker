@@ -4,24 +4,43 @@ const { DateTime } = require("luxon");
 function loadTransactions() {
     /* Load transactions "DB" into JSON object */    
 
-    // Using readFileSync is a blocking operation, but it's needed to ensure all transactions are loaded before routing
     let transJSON = fs.readFileSync('./database/transactions.json');
     return JSON.parse(transJSON);
 }
 
 function saveTransaction(newTransObj) {
     let transJSON = loadTransactions();
+    
     let transArr = transJSON.transactions;
     transArr.push(newTransObj);
-    let newTransJSON = { "transactions": transArr };
-    fs.writeFileSync('./database/transactions.json', JSON.stringify(newTransJSON));
+    transJSON.transactions = transArr;
+    
+    fs.writeFileSync('./database/transactions.json', JSON.stringify(transJSON));
 }
+
+function saveTransactionAndSpent(newTransArr, newSpentArr) {
+    let transJSON = loadTransactions();
+    
+    transJSON.transactions = newTransArr;
+
+    let spentArr = transJSON.spent_points;
+    transJSON.spent_points = spentArr.concat(newSpentArr);
+    
+    fs.writeFileSync('./database/transactions.json', JSON.stringify(transJSON));
+}
+
 
 function loadBalance() {
     let transObj = loadTransactions();
     let transactions = transObj.transactions;
+    let spentPoints = transObj.spent_points;
     let balance = 0;
-    transactions.forEach(transaction => balance += transaction.points); 
+    if(transactions.length != 0) {
+        transactions.forEach(transaction => balance += transaction.points); 
+    }
+    if(spentPoints.length != 0) {
+        spentPoints.forEach(point => balance -= point.points);
+    }
     return balance;
 }
 
@@ -102,11 +121,53 @@ exports.spend_post = (req, res) => {
     if(spendAmt > balance) {
         res.render('spend', { title: 'Spend Points', balance: balance, error: "Spend amount cannot exceed balance" });
     } else {
-        let transObj = loadTransactions();
-        let transactions = transObj.transactions;
-        transactions.forEach(transaction => {
-            
+        let transJSON = loadTransactions();
+        let transArr = transJSON.transactions;
+        
+        // Sort the transaction array by oldest first
+        transArr = transArr.sort((a,b) => {
+            return (a.timestamp < b.timestamp) ? -1 : ((a.timestamp > b.timestamp) ? 1 : 0);
         });
+        
+        let spendArr = [];
+        let newTransArr = [];
+
+        // Compare oldest transaction point amount against the amount to be spent. 
+        transArr.every(transaction => {
+            // Once spend amount is empty, add the remaining transactions to new array to be added to the db later
+            if(spendAmt == 0) {
+                newTransArr.push(transaction);
+                return true;
+            }
+
+            // If spend amount >= the transaction amount, add to spend array and reduce points
+            if(spendAmt >= transaction.points) {
+                spendArr.push(transaction);
+                spendAmt -= transaction.points;
+                // return true acts like a continue statement when using .every()
+                return true;
+            }
+            
+            // If spend amount < the transaction amount, split transaction into two objects: the spent amount and remaining amount.
+            // Place the spent object in the spent array and replace the remaining amount in the new transaction array.
+            if(spendAmt < transaction.points) {
+                let tmpSpendObj = JSON.parse(JSON.stringify(transaction));
+                let tmpTransObj = JSON.parse(JSON.stringify(transaction));
+
+                tmpSpendObj.points = spendAmt;
+                tmpTransObj.points = tmpTransObj.points - spendAmt;
+
+                spendArr.push(tmpSpendObj);
+                newTransArr.push(tmpTransObj);
+                
+                // All points have now been spent
+                spendAmt = 0;
+                return true;
+            }           
+        });
+        // Update db with new values
+        saveTransactionAndSpent(newTransArr, spendArr);
+        res.render('spend', { title: 'Spend Points', balance: balance, spendMsg: "Points Spent Successfully", spendArr: spendArr });
     }
 }
 
