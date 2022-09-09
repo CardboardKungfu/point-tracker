@@ -5,10 +5,16 @@ block content
   if transaction_list[0].payer
     p Points Balance: #{points_balance}
 
-    p Transaction History 
+    p Transaction History
     ul 
       each transaction in transaction_list 
         li #{transaction.payer} | #{transaction.points} | #{transaction.timestamp}
+  
+  if points_list 
+    p Spending History 
+    ul 
+      each point in points_list
+        li #{point.payer} | #{point.points} | #{point.timestamp}
   
   else 
     li There are no transactions to display
