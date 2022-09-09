@@ -81,3 +81,11 @@ exports.spend_get = (req, res) => {
 exports.spend_post = (req, res) => {
 
 }
+
+exports.points_balance_get = (req, res) => {
+    res.render('points_balance', { title: "Points Balance" });
+}
+
+exports.points_balance_post = (req, res) => {
+
+}
