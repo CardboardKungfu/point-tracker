@@ -33,13 +33,9 @@ function saveTransactionAndSpent(newTransArr, newSpentArr) {
 function loadBalance() {
     let transObj = loadTransactions();
     let transactions = transObj.transactions;
-    let spentPoints = transObj.spent_points;
     let balance = 0;
     if(transactions.length != 0) {
         transactions.forEach(transaction => balance += transaction.points); 
-    }
-    if(spentPoints.length != 0) {
-        spentPoints.forEach(point => balance -= point.points);
     }
     return balance;
 }
@@ -56,13 +52,20 @@ function loadPayerNamesArr() {
     return payerArr;
 }
 
+function sortByTimestampOldFirst(arr) {
+    arr = arr.sort((a,b) => {
+        return (a.timestamp < b.timestamp) ? -1 : ((a.timestamp > b.timestamp) ? 1 : 0);
+    });
+    return arr;
+}
+
 exports.transaction_list = (req, res) => {
     let transObj = loadTransactions();
-    let transactions = transObj.transactions;
-
+    let transactions = sortByTimestampOldFirst(transObj.transactions);
+    let spentPoints = sortByTimestampOldFirst(transObj.spent_points);
     let balance = loadBalance();
 
-    res.render('index', { title: 'Points Portal Home', transaction_list: transactions, points_balance: balance });
+    res.render('index', { title: 'Points Portal Home', transaction_list: transactions, points_list: spentPoints, points_balance: balance });
 }
 
 exports.add_transaction_get = (req, res) => {
@@ -103,8 +106,9 @@ exports.add_transaction_post = (req, res) => {
         saveTransaction(newTransaction);
         let transObj = loadTransactions();
         let transactions = transObj.transactions;
+        let spentPoints = transObj.spent_points;
         let balance = loadBalance();
-        res.render('index', { title: 'Points Portal Home', transaction_list: transactions, points_balance: balance });
+        res.render('index', { title: 'Points Portal Home', transaction_list: transactions, points_list: spentPoints, points_balance: balance });
     }
     
 };
@@ -124,10 +128,7 @@ exports.spend_post = (req, res) => {
         let transJSON = loadTransactions();
         let transArr = transJSON.transactions;
         
-        // Sort the transaction array by oldest first
-        transArr = transArr.sort((a,b) => {
-            return (a.timestamp < b.timestamp) ? -1 : ((a.timestamp > b.timestamp) ? 1 : 0);
-        });
+        transArr = sortByTimestampOldFirst(transArr);
         
         let spendArr = [];
         let newTransArr = [];
@@ -154,7 +155,7 @@ exports.spend_post = (req, res) => {
                 let tmpSpendObj = JSON.parse(JSON.stringify(transaction));
                 let tmpTransObj = JSON.parse(JSON.stringify(transaction));
 
-                tmpSpendObj.points = spendAmt;
+                tmpSpendObj.points = parseInt(spendAmt);
                 tmpTransObj.points = tmpTransObj.points - spendAmt;
 
                 spendArr.push(tmpSpendObj);
@@ -167,6 +168,7 @@ exports.spend_post = (req, res) => {
         });
         // Update db with new values
         saveTransactionAndSpent(newTransArr, spendArr);
+        balance = loadBalance();
         res.render('spend', { title: 'Spend Points', balance: balance, spendMsg: "Points Spent Successfully", spendArr: spendArr });
     }
 }
