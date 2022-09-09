@@ -14,7 +14,7 @@ function saveTransaction(newTransObj) {
     let transArr = transJSON.transactions;
     transArr.push(newTransObj);
     let newTransJSON = { "transactions": transArr };
-    fs.writeFileSync('./database/transactions2.json', JSON.stringify(newTransJSON));
+    fs.writeFileSync('./database/transactions.json', JSON.stringify(newTransJSON));
 }
 
 function loadBalance() {
@@ -69,15 +69,17 @@ exports.add_transaction_post = (req, res) => {
     if(req.body.point_amount > balance) {
         errorsArr.push({ "msg": "Point amount must not exceed balance" });
     }
-    console.log(errorsArr.length);
+    
     if(errorsArr.length > 0) {
         let payerArr = loadPayerNamesArr();
         res.render('add_transaction', { title: 'Add Transaction', payerArr: payerArr, balance: balance, errors: errorsArr});
     } else {
+        let timestamp = DateTime.fromISO(req.body.trans_date + 'T' + req.body.trans_time, {zone: 'America/Chicago'});
+        timestamp = timestamp.toISO().split('.')[0] + 'Z';
         let newTransaction = {
             "payer": req.body.payer_name,
             "points": parseInt(req.body.point_amount),
-            "timestamp": new Date()
+            "timestamp": timestamp
         }
         saveTransaction(newTransaction);
         let transObj = loadTransactions();
