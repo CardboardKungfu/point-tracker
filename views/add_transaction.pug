@@ -9,7 +9,7 @@ block content
             each payer in payerArr
                 option=payer
         label(for='point_amount') Point Amount: 
-        input(id='point_amount' type='number' placeholder="" + balance + "" name='point_amount' required='true')
+        input(id='point_amount' type='number' placeholder="" + balance + "" name='point_amount' required='true' min="1" max="" + balance + "")
         label(for='trans_date') Date: 
         input(id='trans_date' type='date' name='trans_date' required='true' min="1970-01-01" )
         label(for='trans_time') Time: 
