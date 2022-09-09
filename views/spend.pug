@@ -3,10 +3,11 @@ extends layout
 block content
     p Points balance: #{balance}
 
+    p Enter point amount to be spent:
     form(method='post' action='/spend')
-        label(for='point_amount') Point Amount: 
-        input(id='point_amount' type='number' placeholder="" + balance + "" name='point_amount' required='true')
-        input(type='submit')
+        label(for='point_amount')
+        input(id='point_amount' type='number' placeholder="" + balance + "" name='point_amount' required='true' min='0' max="" + balance + "")
+        button(type='submit') Spend
     if error
         ul
             li= error
