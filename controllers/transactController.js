@@ -96,7 +96,18 @@ exports.spend_get = (req, res) => {
 }
 
 exports.spend_post = (req, res) => {
+    let balance = loadBalance();
+    let spendAmt = req.body.point_amount;
 
+    if(spendAmt > balance) {
+        res.render('spend', { title: 'Spend Points', balance: balance, error: "Spend amount cannot exceed balance" });
+    } else {
+        let transObj = loadTransactions();
+        let transactions = transObj.transactions;
+        transactions.forEach(transaction => {
+            
+        });
+    }
 }
 
 exports.points_balance_get = (req, res) => {
