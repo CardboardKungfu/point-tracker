@@ -16,6 +16,4 @@ router.post('/spend', transactController.spend_post);
 
 router.get('/points_balance', transactController.points_balance_get);
 
-router.post('/points_balance', transactController.points_balance_post);
-
 module.exports = router;

@@ -29,7 +29,6 @@ function saveTransactionAndSpent(newTransArr, newSpentArr) {
     fs.writeFileSync('./database/transactions.json', JSON.stringify(transJSON));
 }
 
-
 function loadBalance() {
     let transObj = loadTransactions();
     let transactions = transObj.transactions;
@@ -174,10 +173,17 @@ exports.spend_post = (req, res) => {
 }
 
 exports.points_balance_get = (req, res) => {
-    let balance = loadBalance();
-    res.render('points_balance', { title: "Points Balance", balance: balance });
-}
-
-exports.points_balance_post = (req, res) => {
-
+    let payerBalanceObj = {};
+    let transJSON = loadTransactions();
+    let balance = 0;
+    let transArr = transJSON.transactions;
+    transArr.forEach(trans => {
+        balance += trans.points;
+        if(trans.payer in payerBalanceObj) {
+            payerBalanceObj[trans.payer] += trans.points
+        } else {
+            payerBalanceObj[trans.payer] = trans.points;
+        }
+    });
+    res.render('points_balance', { title: "Points Balance", balance: balance, payerBalance: payerBalanceObj });
 }
