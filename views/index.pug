@@ -5,20 +5,38 @@ block content
   if transaction_list[0].payer
     p Points Balance: #{points_balance}
 
-    p Transaction History
-    ul 
+    p 
+      strong Transaction History
+    table
+      tr 
+        th Name 
+        th Point 
+        th Timestamp
       each transaction in transaction_list 
-        li #{transaction.payer} | #{transaction.points} | #{transaction.timestamp}
+        tr
+          td= transaction.payer
+          td= transaction.points
+          td= transaction.timestamp
+  else 
+    p There are no transactions to display
   
   if points_list 
-    p Spending History 
-    ul 
+    p 
+      strong Spending History 
+    table
+      tr 
+        th Name 
+        th Point 
+        th Timestamp   
       each point in points_list
-        li #{point.payer} | #{point.points} | #{point.timestamp}
-  
+        tr
+          td= point.payer
+          td= point.points
+          td= point.timestamp
   else 
-    li There are no transactions to display
+    p There is no spending history to display
 
+  br
   a(class='button' href='/spend') Spend
   br
   br

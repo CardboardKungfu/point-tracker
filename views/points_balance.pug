@@ -1,8 +1,13 @@
 extends layout
 
 block content
-    p Total Points Balance: #{balance}
-
-    ul 
-        each key, val in payerBalance 
-            li #{val} | #{key}
+  p Total Points Balance: #{balance}
+  
+  table 
+    tr
+      th Name 
+      th Points
+    each key, val in payerBalance 
+      tr
+        td= val
+        td= key

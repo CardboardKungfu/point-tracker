@@ -7,6 +7,14 @@ a {
   color: #00B7FF;
 }
 
+th {
+  text-align: left;
+}
+
+td {
+  text-align: left;
+}
+
 .banner {
   color: #000;
   text-decoration: none;
