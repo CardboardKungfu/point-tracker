@@ -40,15 +40,7 @@ function loadBalance() {
 }
 
 function loadPayerNamesArr() {
-    let transObj = loadTransactions();
-    let transactions = transObj.transactions;
-    let payerArr = [];
-    transactions.forEach(payerObj => {
-        if(!payerArr.includes(payerObj.payer)) {
-            payerArr.push(payerObj.payer);
-        }
-    });
-    return payerArr;
+    return  ["DANNON", "MILLER COORS", "UNILEVER", "PILLSBURY", "SARA LEE", "LYSOL", "MAGNOLIA"];
 }
 
 function sortByTimestampOldFirst(arr) {
