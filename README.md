@@ -25,3 +25,11 @@ For this assignment, the requirements stated that storing items in memory was ac
 The database contains three keys: "transactions", "spent_points", and "payer_names". My logic for storing transactions and spent points is as follows:
 
 The user doesn't care how points are spent, but we do for accounting purposes. Therefore, whenever a transaction is added through the add_transaction route, that transaction is stored under "transactions". When a user spends points, the oldest transaction that can cover that point amount is removed from "transactions" and placed in "spent_points". If there are more points leftover, the next oldest transaction is considered. If there are leftover points that cannot count towards an entire transaction, the transaction is "split" into two. The transaction is copied, the points are reduced by the requisite amount, that copy is placed under "spent_points", and then the original transaction's points are also reduced by the required amount. Using this process, a current transaction (and thus current balance) and spent points history are maintained an easily accessible.
+
+## Running in Development
+To run this website in development:
+
+1. Checkout the branch `dev`
+2. Run the command `npm install` in your terminal to install all the necessary dependencies.
+3. Run the script `npm run start`
+4. Open a web browser and navigate to `http://localhost:3000/`
