@@ -1,13 +1,15 @@
 extends layout
 
 block content
+  br
+  h2 Welcome to the Fetch Rewards Points Portal!
+  p View transaction and spending history here or spend points and add transactions at the navigation above
+
   //- Check if data came over properly before displaying data 
   if transaction_list[0].payer
-    p Points Balance: #{points_balance}
-
     p 
       strong Transaction History
-    table
+    table.table
       tr 
         th Name 
         th Point 
@@ -20,10 +22,10 @@ block content
   else 
     p There are no transactions to display
   
-  if points_list 
+  if points_list.point
     p 
       strong Spending History 
-    table
+    table.table
       tr 
         th Name 
         th Point 
@@ -33,14 +35,8 @@ block content
           td= point.payer
           td= point.points
           td= point.timestamp
-  else 
-    p There is no spending history to display
-
-  br
-  a(class='button' href='/spend') Spend
-  br
-  br
-  a(class='button' href='/add_transaction') Add Transaction
-  br
-  br
-  a(class='button' href='/points_balance') Points Balance
+  else
+    br 
+    p 
+      strong There is no spending history to display
+    

@@ -1,10 +1,21 @@
 doctype html
-html(lang='en')
+html(lang="en")
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel="stylesheet", href="/stylesheets/style.css")
+    link(rel="stylesheet", href="/css/bootstrap.min.css")
 
-  body
-    h1
-      a(class='banner' href='/') Welcome to the Fetch Rewards Points Portal
+  body.bg-light
+    nav.navbar.navbar-expand-lg
+      div.container-fluid
+        a(class="navbar-brand", href="/")
+          img(src="/images/fetch-rewards-logo.png")
+          | Fetch Rewards Points Portal
+        div.justify-content-end
+          div.navbar-nav
+            a(class="nav-link text-dark" href="/") Home 
+            a(class="nav-link text-dark" href="/spend") Spend 
+            a(class="nav-link text-dark" href="/add_transaction") Add Transaction
+            a(class="nav-link text-dark" href="/points_balance") Points Balance
+
     block content
