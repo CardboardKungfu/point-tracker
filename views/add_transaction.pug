@@ -5,7 +5,8 @@ block content
 
     form(method='post' action='/add_transaction')
         label(for='payer_name') Select Payer Name: 
-        select(id='payer_name' name='payer_name' required='true')
+        input(type='text' list='payer_name_list' id="payer_name" name="payer_name")
+        datalist(id='payer_name_list' required='true')
             each payer in payerArr
                 option=payer
         label(for='point_amount') Point Amount: 
@@ -14,7 +15,7 @@ block content
         input(id='trans_date' type='date' name='trans_date' required='true' min="1970-01-01" )
         label(for='trans_time') Time: 
         input(id='trans_time' type='time' name='trans_time' required='true')
-        input(type='submit')
+        button(type='submit') Submit
     if errors
         ul
         each error in errors

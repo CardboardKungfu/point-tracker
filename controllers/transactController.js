@@ -8,12 +8,16 @@ function loadTransactions() {
     return JSON.parse(transJSON);
 }
 
-function saveTransaction(newTransObj) {
+function saveTransaction(newTransObj, payerNameArr=null) {
     let transJSON = loadTransactions();
     
     let transArr = transJSON.transactions;
     transArr.push(newTransObj);
     transJSON.transactions = transArr;
+
+    if(payerNameArr !== null) {
+        transJSON.payer_names = payerNameArr;
+    }
     
     fs.writeFileSync('./database/transactions.json', JSON.stringify(transJSON));
 }
@@ -40,7 +44,8 @@ function loadBalance() {
 }
 
 function loadPayerNamesArr() {
-    return  ["DANNON", "MILLER COORS", "UNILEVER", "PILLSBURY", "SARA LEE", "LYSOL", "MAGNOLIA"];
+    let transObj = loadTransactions();
+    return transObj.payer_names;
 }
 
 function sortByTimestampOldFirst(arr) {
@@ -54,9 +59,8 @@ exports.transaction_list = (req, res) => {
     let transObj = loadTransactions();
     let transactions = sortByTimestampOldFirst(transObj.transactions);
     let spentPoints = sortByTimestampOldFirst(transObj.spent_points);
-    let balance = loadBalance();
 
-    res.render('index', { title: 'Points Portal Home', transaction_list: transactions, points_list: spentPoints, points_balance: balance });
+    res.render('index', { title: 'Points Portal Home', transaction_list: transactions, points_list: spentPoints });
 }
 
 exports.add_transaction_get = (req, res) => {
@@ -90,11 +94,27 @@ exports.add_transaction_post = (req, res) => {
         let timestamp = DateTime.fromISO(req.body.trans_date + 'T' + req.body.trans_time, {zone: 'America/Chicago'});
         timestamp = timestamp.toISO().split('.')[0] + 'Z';
         let newTransaction = {
-            "payer": req.body.payer_name,
+            "payer": req.body.payer_name.toUpperCase(),
             "points": parseInt(req.body.point_amount),
             "timestamp": timestamp
         }
-        saveTransaction(newTransaction);
+
+        // Check to see if user created new name
+        let tmpTransObj = loadTransactions();
+        let payerNamesArr = tmpTransObj.payer_names;
+        
+        console.log(req.body);
+        
+        if(!payerNamesArr.includes(req.body.payer_name.toUpperCase())) {
+            payerNamesArr.push(req.body.payer_name.toUpperCase());
+            // Save transaction to db with new payer name
+            saveTransaction(newTransaction, payerNamesArr);
+        } else {
+            // Save transaction to db without a new payer name
+            saveTransaction(newTransaction);
+        }
+
+        // Load updated db and render home page
         let transObj = loadTransactions();
         let transactions = transObj.transactions;
         let spentPoints = transObj.spent_points;
