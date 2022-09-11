@@ -5,7 +5,7 @@ html(lang="en")
     link(rel="stylesheet", href="/stylesheets/style.css")
     link(rel="stylesheet", href="/css/bootstrap.min.css")
 
-  body.bg-light
+  body.bg-white.pt-0.pb-0.d-flex.flex-column.min-vh-100
     nav.navbar.navbar-expand-lg
       div.container-fluid
         a(class="navbar-brand", href="/")
@@ -19,3 +19,16 @@ html(lang="en")
             a(class="nav-link text-dark" href="/points_balance") Points Balance
 
     block content
+    br
+    div.container-fluid.mt-auto
+      footer.py-3.my-4 
+        ul.nav.justify-content-center.border-bottom.pb-3.mb-3
+          li.nav-item 
+            a(class="nav-link px-2 text-muted" href="/") Home 
+          li.nav-item 
+            a(class="nav-link px-2 text-muted" href="/spend") Spend 
+          li.nav-item 
+            a(class="nav-link px-2 text-muted" href="/add_transaction") Add Transaction 
+          li.nav-item 
+            a(class="nav-link px-2 text-muted" href="/points_balance") Points Balance 
+        p.text-center-text-muted © 2022 Fetch Rewards, All rights reserved.

@@ -9,32 +9,37 @@ block content
   if transaction_list[0].payer
     p 
       strong Transaction History
-    table.table
-      tr 
-        th Name 
-        th Point 
-        th Timestamp
-      each transaction in transaction_list 
-        tr
-          td= transaction.payer
-          td= transaction.points
-          td= transaction.timestamp
+    table.table.table-striped.table-hover
+      thead 
+        tr 
+          th Name 
+          th Point 
+          th Timestamp
+      tbody
+        each transaction in transaction_list 
+          tr
+            td= transaction.payer
+            td= transaction.points
+            td= transaction.timestamp
   else 
+    br
     p There are no transactions to display
   
-  if points_list.point
+  if points_list[0]
     p 
       strong Spending History 
-    table.table
-      tr 
-        th Name 
-        th Point 
-        th Timestamp   
-      each point in points_list
-        tr
-          td= point.payer
-          td= point.points
-          td= point.timestamp
+    table.table.table-striped.table-hover
+      thead
+        tr 
+          th Name 
+          th Point 
+          th Timestamp   
+      tbody  
+        each point in points_list
+          tr
+            td= point.payer
+            td= point.points
+            td= point.timestamp
   else
     br 
     p 

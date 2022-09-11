@@ -1,13 +1,16 @@
 extends layout
 
 block content
-  p Total Points Balance: #{balance}
+  br
+  h3 Total Points Balance: #{balance}
   
-  table.table
-    tr
-      th Name 
-      th Points
-    each key, val in payerBalance 
+  table.table.table-striped.table-hover
+    thead
       tr
-        td= val
-        td= key
+        th Name 
+        th Points
+    tbody
+      each key, val in payerBalance 
+        tr
+          td= val
+          td= key
