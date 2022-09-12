@@ -3,7 +3,6 @@
 ## Technologies Used
 - Node.js
 - Express.js
-- Heroku
 
 ## Website Overview
 The requirements for this assignment are detailed in the [Fetch Rewards Coding Exercise - Backend Software Engineering](https://fetch-hiring.s3.us-east-1.amazonaws.com/points.pdf) pdf document. This document outlines three main tasks:
