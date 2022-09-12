@@ -43,11 +43,6 @@ function loadBalance() {
     return balance;
 }
 
-function loadPayerNamesArr() {
-    let transObj = loadTransactions();
-    return transObj.payer_names;
-}
-
 function sortByTimestampOldFirst(arr) {
     arr = arr.sort((a,b) => {
         return (a.timestamp < b.timestamp) ? -1 : ((a.timestamp > b.timestamp) ? 1 : 0);
@@ -57,39 +52,34 @@ function sortByTimestampOldFirst(arr) {
 
 exports.transaction_list = (req, res) => {
     let transObj = loadTransactions();
-    let transactions = sortByTimestampOldFirst(transObj.transactions);
-    let spentPoints = sortByTimestampOldFirst(transObj.spent_points);
-
-    res.render('index', { title: 'Points Portal Home', transaction_list: transactions, points_list: spentPoints });
-}
-
-exports.add_transaction_get = (req, res) => {
-    let payerArr = loadPayerNamesArr();
-    let balance = loadBalance();
-
-    res.render('add_transaction', { title: 'Add Transaction', payerArr: payerArr, balance: balance });
+    res.status(200).send({ transactions: transObj });
 }
 
 exports.add_transaction_post = (req, res) => {
     let balance = loadBalance();
     let errorsArr = [];
 
-    if(!req.body.trans_date) {
-        errorsArr.push({ "msg": "Please input valid date" });
-    }
-    if(!req.body.trans_time) {
-        errorsArr.push({ "msg": "Please input valid time" });
+    if(!req.body.point_amount) {
+        errorsArr.push({ "msg": "Point amount must be specified" });
     }
     if(req.body.point_amount <= 0) {
-        errorsArr.push({ "msg": "Point amount must not be negative or 0" });
+        errorsArr.push({ "msg": "Point amount must not be 0 or below" });
     }
     if(req.body.point_amount > balance) {
         errorsArr.push({ "msg": "Point amount must not exceed balance" });
     }
+    if(!req.body.payer_name) {
+        errorsArr.push({ "msg": "Payer name must be specified" });
+    }
+    if(!req.body.trans_date) {
+        errorsArr.push({ "msg": "Date must be specified: use format YYYY-MM-DD" });
+    }
+    if(!req.body.trans_time) {
+        errorsArr.push({ "msg": "Time must be specified: use format HH:MM" });
+    }
     
     if(errorsArr.length > 0) {
-        let payerArr = loadPayerNamesArr();
-        res.render('add_transaction', { title: 'Add Transaction', payerArr: payerArr, balance: balance, errors: errorsArr});
+        res.status(400).send({errors: errorsArr});
     } else {
         let timestamp = DateTime.fromISO(req.body.trans_date + 'T' + req.body.trans_time, {zone: 'America/Chicago'});
         timestamp = timestamp.toISO().split('.')[0] + 'Z';
@@ -103,8 +93,6 @@ exports.add_transaction_post = (req, res) => {
         let tmpTransObj = loadTransactions();
         let payerNamesArr = tmpTransObj.payer_names;
         
-        console.log(req.body);
-        
         if(!payerNamesArr.includes(req.body.payer_name.toUpperCase())) {
             payerNamesArr.push(req.body.payer_name.toUpperCase());
             // Save transaction to db with new payer name
@@ -116,25 +104,29 @@ exports.add_transaction_post = (req, res) => {
 
         // Load updated db and render home page
         let transObj = loadTransactions();
-        let transactions = transObj.transactions;
-        let spentPoints = transObj.spent_points;
-        let balance = loadBalance();
-        res.render('index', { title: 'Points Portal Home', transaction_list: transactions, points_list: spentPoints, points_balance: balance });
+        res.status(200).send(transObj.transactions);
     }
-    
-};
-
-exports.spend_get = (req, res) => {
-    let balance = loadBalance();
-    res.render('spend', { title: 'Spend Points', balance: balance });
 }
 
 exports.spend_post = (req, res) => {
+
+    let errorsArr = [];
+    
     let balance = loadBalance();
     let spendAmt = req.body.point_amount;
 
-    if(spendAmt > balance) {
-        res.render('spend', { title: 'Spend Points', balance: balance, error: "Spend amount cannot exceed balance" });
+    if(!spendAmt) {
+        errorsArr.push({ "msg": "Point amount must be specified" });
+    }
+    if(spendAmt && spendAmt > balance) {
+        errorsArr.push({ "msg": "Spend amount exceeds current balance" });
+    }
+    if(spendAmt && spendAmt <= 0) {
+        errorsArr.push({ "msg": "Spend amount must not be 0 or below" });
+    }
+    if(errorsArr.length > 0) {
+        // Send 400 response along with errors array
+        res.status(400).send({errors: errorsArr});
     } else {
         let transJSON = loadTransactions();
         let transArr = transJSON.transactions;
@@ -154,7 +146,10 @@ exports.spend_post = (req, res) => {
 
             // If spend amount >= the transaction amount, add to spend array and reduce points
             if(spendAmt >= transaction.points) {
-                spendArr.push(transaction);
+                spendArr.push({
+                    "payer": transaction.payer,
+                    "points": transaction.points
+                });
                 spendAmt -= transaction.points;
                 // return true acts like a continue statement when using .every()
                 return true;
@@ -163,13 +158,14 @@ exports.spend_post = (req, res) => {
             // If spend amount < the transaction amount, split transaction into two objects: the spent amount and remaining amount.
             // Place the spent object in the spent array and replace the remaining amount in the new transaction array.
             if(spendAmt < transaction.points) {
-                let tmpSpendObj = JSON.parse(JSON.stringify(transaction));
                 let tmpTransObj = JSON.parse(JSON.stringify(transaction));
 
-                tmpSpendObj.points = parseInt(spendAmt);
                 tmpTransObj.points = tmpTransObj.points - spendAmt;
 
-                spendArr.push(tmpSpendObj);
+                spendArr.push({
+                    "payer": tmpTransObj.payer,
+                    "points": parseInt(spendAmt)
+                });
                 newTransArr.push(tmpTransObj);
                 
                 // All points have now been spent
@@ -179,8 +175,7 @@ exports.spend_post = (req, res) => {
         });
         // Update db with new values
         saveTransactionAndSpent(newTransArr, spendArr);
-        balance = loadBalance();
-        res.render('spend', { title: 'Spend Points', balance: balance, spendMsg: "Points Spent Successfully", spendArr: spendArr });
+        res.status(200).send({ spendArr: spendArr });
     }
 }
 
@@ -197,5 +192,5 @@ exports.points_balance_get = (req, res) => {
             payerBalanceObj[trans.payer] = trans.points;
         }
     });
-    res.render('points_balance', { title: "Points Balance", balance: balance, payerBalance: payerBalanceObj });
+    res.status(200).send(payerBalanceObj);
 }

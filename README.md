@@ -5,8 +5,7 @@ Here is the link for my project: [Public Web Address](https://quiet-bayou-08037.
 
 ## Technologies Used
 - Node.js
-- Express.js w/ Pug template engine
-- Bootstrap
+- Express.js
 - Heroku
 
 ## Website Overview
@@ -16,7 +15,23 @@ The requirements for this assignment are detailed in the [Fetch Rewards Coding E
 2. Spend points using the rules above and return a list of { "payer": <string>, "points": <integer> } for each call.
 3. Return all payer point balances
 
-Each link on the website accomplishes these tasks. All data is viewable on their respective links.
+Each route is as follows:
+- http://localhost:3000
+    - Returns entire transaction.json database
+- http://localhost:3000/add_transaction
+    - post using the format `{
+            "payer_name": "Unilever",
+            "point_amount": 600,
+            "trans_date": "2022-09-12",
+            "trans_time": "14:17"
+        }`
+    - Returns array of transactions
+- http://localhost:3000/spend
+    - post using the format `{
+            "point_amount": 250
+        }`
+    - Returns array reduced transaction amounts
+- http://localhost:3000/points_balance
 
 ### Database
 For this assignment, the requirements stated that storing items in memory was acceptable. So instead of creating a proper database, I used a simple JSON file to store any persistent data. 
