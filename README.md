@@ -39,10 +39,9 @@ The database contains three keys: "transactions", "spent_points", and "payer_nam
 
 The user doesn't care how points are spent, but we do for accounting purposes. Therefore, whenever a transaction is added through the add_transaction route, that transaction is stored under "transactions". When a user spends points, the oldest transaction that can cover that point amount is removed from "transactions" and placed in "spent_points". If there are more points leftover, the next oldest transaction is considered. If there are leftover points that cannot count towards an entire transaction, the transaction is "split" into two. The transaction is copied, the points are reduced by the requisite amount, that copy is placed under "spent_points", and then the original transaction's points are also reduced by the required amount. Using this process, a current transaction (and thus current balance) and spent points history are maintained an easily accessible.
 
-## Running in Development
-To run this website in development:
-
+## Setup Guide
+To run this webservice:
 1. Checkout the branch `main`
 2. Run the command `npm install` in your terminal to install all the necessary dependencies.
-3. Run the script `npm run start`
+3. Run the script `npm run start` to start the server
 4. Open any API platform (I used Postman) and make your requests given the format above
