@@ -1,8 +1,5 @@
 # Fetch Rewards Backend Engineering Assignment
 
-## Public Web Address
-Here is the link for my project: [Public Web Address](https://quiet-bayou-08037.herokuapp.com/)
-
 ## Technologies Used
 - Node.js
 - Express.js
@@ -19,7 +16,7 @@ Each route is as follows:
 - http://localhost:3000
     - Returns entire transaction.json database
 - http://localhost:3000/add_transaction
-    - post using the format `{
+    - POST using the format `{
             "payer_name": "Unilever",
             "point_amount": 600,
             "trans_date": "2022-09-12",
@@ -27,11 +24,12 @@ Each route is as follows:
         }`
     - Returns array of transactions
 - http://localhost:3000/spend
-    - post using the format `{
+    - POST using the format `{
             "point_amount": 250
         }`
     - Returns array reduced transaction amounts
 - http://localhost:3000/points_balance
+    - Returns object containing point totals
 
 ### Database
 For this assignment, the requirements stated that storing items in memory was acceptable. So instead of creating a proper database, I used a simple JSON file to store any persistent data. 
@@ -44,7 +42,7 @@ The user doesn't care how points are spent, but we do for accounting purposes. T
 ## Running in Development
 To run this website in development:
 
-1. Checkout the branch `dev`
+1. Checkout the branch `main`
 2. Run the command `npm install` in your terminal to install all the necessary dependencies.
 3. Run the script `npm run start`
-4. Open a web browser and navigate to `http://localhost:3000/`
+4. Open any API platform (I used Postman) and make your requests given the format above
